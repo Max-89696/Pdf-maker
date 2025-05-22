@@ -1,1 +1,138 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tools - EMI & PDF</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1b2430;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #32c3ff;
+      margin-top: 30px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background-color: #101924;
+      color: #fff;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #888;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      background-color: #1dcbe6;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .output {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .tool {
+      background-color: #111a25;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- EMI Calculator -->
+  <div class="tool">
+    <h2>EMI Calculator</h2>
+    <label for="loanAmount">Loan Amount (₹)</label>
+    <input type="number" id="loanAmount" placeholder="e.g. 100000">
+
+    <label for="interestRate">Annual Interest Rate (%)</label>
+    <input type="number" id="interestRate" placeholder="e.g. 10">
+
+    <label for="loanTerm">Loan Term (in Months)</label>
+    <input type="number" id="loanTerm" placeholder="e.g. 12">
+
+    <button onclick="calculateEMI()">Calculate EMI</button>
+    <div class="output" id="emiResult"></div>
+  </div>
+
+  <!-- Text to PDF -->
+  <div class="tool">
+    <h2>Text to PDF</h2>
+    <label for="pdfText">Enter your text</label>
+    <textarea id="pdfText" rows="8" placeholder="Write something..."></textarea>
+
+    <label for="fileName">File name</label>
+    <input type="text" id="fileName" placeholder="e.g. MyFile">
+
+    <button onclick="generatePDF()">Download PDF</button>
+  </div>
+
+  <script>
+    // EMI Calculator
+    function calculateEMI() {
+      const P = parseFloat(document.getElementById('loanAmount').value);
+      const annualRate = parseFloat(document.getElementById('interestRate').value);
+      const N = parseFloat(document.getElementById('loanTerm').value);
+      if (!P || !annualRate || !N) {
+        document.getElementById('emiResult').textContent = "Please fill all fields.";
+        return;
+      }
+      const R = annualRate / 12 / 100;
+      const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+      document.getElementById('emiResult').textContent = `Monthly EMI: ₹${emi.toFixed(2)}`;
+    }
+
+    // Text to PDF
+    function generatePDF() {
+      const text = document.getElementById('pdfText').value;
+      const filename = document.getElementById('fileName').value || 'Document';
+      if (!text.trim()) {
+        alert("Please enter some text.");
+        return;
+      }
+
+      const pdfWindow = window.open("", "_blank");
+      pdfWindow.document.write(`
+        <html><head><title>${filename}</title></head><body><pre>${text}</pre></body></html>
+      `);
+      pdfWindow.document.close();
+      pdfWindow.focus();
+      pdfWindow.print();
+    }
+  </script>
+
+</body>
+</html>
